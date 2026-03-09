@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(Client_code)
+set(CMAKE_CXX_STANDARD 11)
+include_directories(inc)
+add_executable(Client_code main.cpp src/tcp.cpp src/udp.cpp)
