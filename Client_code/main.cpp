@@ -4,11 +4,18 @@ Simulates sensor reading via input
 */
 #include "tcp.h"
 #include "udp.h"
-int main()
+#include <iostream>
+int main(int argc, char* argv[])
 {
     /*
     SW flow:
-    1. Client tries to establish connection with server
+    1. Client tries to establish connection with server */
+    if (argc < 2) 
+    {
+        std::cerr << "Usage: " << argv[0] << " <protocol>" << std::endl;
+        return 1;
+    }
+    /*
     2. Server confirms connection and sends a message to client to set "initial threshold"
     3. Client receives the message and displays simulated LED status as text
     while( 1)
@@ -29,6 +36,6 @@ int main()
     vTaskDelay(1000); // Simulate delay for sensor reading
     }
     */
-    
+
     return 0;    
 }
