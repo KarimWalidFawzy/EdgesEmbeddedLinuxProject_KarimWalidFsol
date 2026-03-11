@@ -5,6 +5,8 @@ Simulates sensor reading via input
 #include "tcp.h"
 #include "udp.h"
 #include <iostream>
+#include <unistd.h>
+
 int main(int argc, char* argv[])
 {
     /*
@@ -13,7 +15,18 @@ int main(int argc, char* argv[])
     if (argc < 2) 
     {
         std::cerr << "Usage: " << argv[0] << " <protocol>" << std::endl;
+        std::cout << "protocol can be: tcp \n";
+        std::cout <<"protocol can be: udp "<<"\n";
         return 1;
+    }
+    std::string mode = std::string(argv[1]);
+    if(mode == "tcp")
+    {
+
+    }
+    else if (mode == "udp")
+    {
+
     }
     /*
     2. Server confirms connection and sends a message to client to set "initial threshold"

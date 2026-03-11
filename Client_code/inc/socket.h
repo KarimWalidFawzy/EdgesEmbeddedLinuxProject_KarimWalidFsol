@@ -9,6 +9,7 @@
         protected:
         unsigned short int socket_no;
         public:
+        Socket(int port =8080): socket_no(port){}
         virtual void waitForConnect()=0;
         virtual void connect() = 0;
         virtual void send(const std::string& message) = 0;
