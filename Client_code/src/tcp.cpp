@@ -13,7 +13,7 @@ void TCPSocket::send(const std::string& message)
 {
     // Implementation for sending a message to the server
 }
-void TCPSocket::receive()
+void TCPSocket::receive(char* buffer)
 {
     // Implementation for receiving a message from the server
 }

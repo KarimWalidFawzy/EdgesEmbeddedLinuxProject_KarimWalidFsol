@@ -4,6 +4,7 @@
     #error "This program requires C++"
     #endif
     #include <string>
+    #include <sys/socket.h>
     class Socket
     {
         protected:
@@ -13,7 +14,7 @@
         virtual void waitForConnect()=0;
         virtual void connect() = 0;
         virtual void send(const std::string& message) = 0;
-        virtual void receive() = 0;
+        virtual void receive(char* buffer) = 0;
         virtual void shutdown() = 0;
     };
 #endif 

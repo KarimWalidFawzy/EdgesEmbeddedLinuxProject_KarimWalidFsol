@@ -13,7 +13,7 @@ void UDPSocket::send(const std::string& message)
 {
     // Implementation for sending a message to the server
 }
-void UDPSocket::receive()
+void UDPSocket::receive(char* buffer)
 {
     // Implementation for receiving a message from the server
 }
