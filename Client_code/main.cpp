@@ -6,6 +6,7 @@ Simulates sensor reading via input
 #include "udp.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <unistd.h>
 #include "socket.h"
 int main(int argc, char* argv[])
@@ -45,25 +46,63 @@ int main(int argc, char* argv[])
     */
    char buffer[1<<20];
    clientSocket->receive(buffer);
-   std::cout << "Received from server: " << buffer<<std::endl;
-   /*
-   while( 1)
-    {
-    Server sends command 
-    if (command==get temp)
-    {
-      Client asks user to input simulated temp value
-      User inputs temp value from terminal 
-      send to server 
-    } 
-    else 
-    { 
-    if (command==set threshold)
-    {threshold = new threshold value
-    update led status based on new threshold}
-    }
-    vTaskDelay(1000); // Simulate delay for sensor reading
-    }
-    */
-    return 0;    
+   std::cout << "Received from server: " << buffer << std::endl;
+
+   // interpret the first message as initial threshold
+   int threshold = 0;
+   try {
+       threshold = std::stoi(buffer);
+   } catch (...) {
+       std::cerr << "Invalid threshold received" << std::endl;
+   }
+   std::cout << "Starting with threshold " << threshold << std::endl;
+
+   // helper to display led status based on last temperature
+   auto printLed = [&](int lastTemp) {
+       if (lastTemp > threshold)
+           std::cout << "LED Status: ON (" << lastTemp << " > " << threshold << ")\n";
+       else
+           std::cout << "LED Status: OFF (" << lastTemp << " <= " << threshold << ")\n";
+   };
+
+   // interactive loop: respond to commands from server
+   bool running = true;
+   int lastTemp = 0;
+   while (running) {
+       // wait for next command
+       clientSocket->receive(buffer);
+       std::string command(buffer);
+       if (command.empty()) {
+           // connection closed or error
+           break;
+       }
+       std::cout << "Command from server: '" << command << "'\n";
+       if (command == "get temp") {
+           std::cout << "Enter simulated temperature: ";
+           std::string temp;
+           std::getline(std::cin, temp);
+           clientSocket->send(temp);
+           try {
+               lastTemp = std::stoi(temp);
+           } catch (...) {}
+           printLed(lastTemp);
+       } else if (command.rfind("set threshold", 0) == 0) {
+           // format: set threshold <value>
+           std::istringstream iss(command);
+           std::string tok;
+           int newTh = threshold;
+           iss >> tok >> tok >> newTh;
+           threshold = newTh;
+           std::cout << "New threshold: " << threshold << std::endl;
+           printLed(lastTemp);
+       } else if (command == "exit") {
+           running = false;
+       } else {
+           std::cout << "Unknown command, ignoring." << std::endl;
+       }
+   }
+
+   clientSocket->shutdown();
+   delete clientSocket;
+   return 0;    
 }
